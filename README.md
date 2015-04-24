@@ -41,7 +41,7 @@ templateSrc: Path to a handlebars template
 
 Register a handlebars [helper](https://github.com/wycats/handlebars.js/#registering-helpers)
 
-###hbs.registerPartial(name, helperFn);
+###hbs.registerPartial(name, partial);
 
 Register a handlebars [partial](https://github.com/wycats/handlebars.js/#partials)
 
