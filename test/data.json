@@ -1,0 +1,24 @@
+{
+    "users": [ {
+        "person": {
+            "firstName": "Geoff",
+            "lastName": "Capes"
+        },
+        "jobTitle": "Budgerigar fancier and strongman",
+        "twitter": "geoffcapes"
+    }, {
+        "person": {
+            "firstName": "Timmy",
+            "lastName": "Mallet"
+        },
+        "jobTitle": "TV Presenter",
+        "twitter": "TimmyMallet"
+    }, {
+        "person": {
+            "firstName": "Avid",
+            "lastName": "Merrion"
+        },
+        "jobTitle": "Celebrity Stalker",
+        "twitter": "AvidMerrion"
+    } ]
+}

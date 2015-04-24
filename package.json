@@ -4,7 +4,7 @@
   "description": "Gulp plugin that runs JSON files through a handlebars template, converting them to HTML",
   "main": "index.js",
   "scripts": {
-    "test": "test.js"
+    "test": "mocha test.js"
   },
   "repository": {
     "type": "git",
@@ -13,7 +13,8 @@
   "keywords": [
     "handlebars",
     "hbs",
-    "json"
+    "json",
+    "gulp"
   ],
   "author": "Phil Mander",
   "license": "MIT",
@@ -25,5 +26,8 @@
     "gulp-util": "^3.0.4",
     "handlebars": "^3.0.2",
     "through2": "^0.6.5"
+  },
+  "devDependencies": {
+    "mocha": "^2.2.4"
   }
 }
