@@ -37,6 +37,14 @@ Useful in conjunction with tools like [Dox](https://github.com/tj/dox) for gener
 
 templateSrc: Path to a handlebars template
 
+###hbs.registerHelper(name, helperFn);
+
+Register a handlebars [helper](https://github.com/wycats/handlebars.js/#registering-helpers)
+
+###hbs.registerPartial(name, helperFn);
+
+Register a handlebars [partial](https://github.com/wycats/handlebars.js/#partials)
+
 ##License 
 
 MIT © Phil Mander
