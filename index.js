@@ -20,7 +20,7 @@ function gulpHbs(templateSrc) {
             templates[templateSrc] = Handlebars.compile(templateText);
         }
         catch (err) {
-            throw new gutil.PluginError('gulp-hbs', err);
+            throw new gutil.PluginError(PLUGIN_NAME, err);
         }
     }
 
@@ -38,7 +38,7 @@ function gulpHbs(templateSrc) {
             file.contents = new Buffer(result, 'utf-8');
         }
         if (file.isStream()) {
-            return cb(new gutil.PluginError('gulp-hbs', 'Streaming not supported'));
+            return cb(new gutil.PluginError(PLUGIN_NAME, 'Streaming not supported'));
         }
 
         cb(null, file);
