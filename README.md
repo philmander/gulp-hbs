@@ -12,20 +12,23 @@ Runs JSON files through a handlebars template, converting them to HTML
 ##Usage
 
 ```javascript
-    var hbs = require('gulp-hbs')
+    var hbs = require('gulp-hbs');
 
     gulp.src('./*.json')
         .pipe(hbs('./template.hbs')))
-        .pipe(gulp.dest(./html));
+        .pipe(gulp.dest('./html'));
 ```
 
 Useful in conjunction with tools like [Dox](https://github.com/tj/dox) for generating docs from JSON.
 
 ```javascript
+    var dox = require('gulp-dox');
+    var hbs = require('gulp-hbs');
+    
     gulp.src('./src/**/*.js')
         .pipe(dox())
         .pipe(hbs('./api-template.hbs')))
-        .pipe(gulp.dest(./docs));
+        .pipe(gulp.dest('./docs'));
 ```
 
 ##API
