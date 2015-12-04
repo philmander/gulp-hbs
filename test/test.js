@@ -3,7 +3,7 @@ var gutil = require('gulp-util');
 var fs = require('fs');
 var vfs = require('vinyl-fs');
 var hbs = require('../');
-var ExpectSingleFile = require('./ExpectSingleFile');
+var expects = require('./expects');
 
 function testfile(relpath) {
     return require.resolve('./' + relpath);
@@ -17,8 +17,8 @@ it('should generate an html document', function(done) {
 
     vfs.src('data.json', {cwd: __dirname})
         .pipe(hbs(testfile('template.hbs')))
-        .pipe(ExpectSingleFile(
+        .pipe(expects.singleFile(
+            'data.html',
             fs.readFileSync(testfile('expected.html'), 'utf-8'),
-            { relative: 'data.html' },
             done));
 });
