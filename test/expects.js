@@ -28,7 +28,8 @@ ExpectStream.prototype.verifyOnFile = function(file) {
     var expected = this.expectedFiles[file.relative];
     if (typeof expected === 'string')
         expected = { contents: expected };
-    assert(vinyl.isVinyl(file), file.relative + " is not a vinyl file");
+    // Can't check isVinyl, see https://github.com/timnew/vinyl-fs-mock/pull/2
+    //assert(vinyl.isVinyl(file), file.relative + " is not a vinyl file");
     for (var key in expected) {
         var expectedValue = expected[key];
         if (key === "contents") {
