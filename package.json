@@ -14,7 +14,8 @@
     "handlebars",
     "hbs",
     "json",
-    "gulp"
+    "gulp",
+    "gulpplugin"
   ],
   "author": "Phil Mander",
   "license": "MIT",
