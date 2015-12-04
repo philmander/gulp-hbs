@@ -22,21 +22,30 @@ ExpectStream.prototype._write = function(file, encoding, callback) {
 };
 
 ExpectStream.prototype.verifyOnFile = function(file) {
-    assert(this.expectedFiles.hasOwnProperty(file.relative));
+    assert(
+        this.expectedFiles.hasOwnProperty(file.relative),
+        "unexpected file in stream: " + file.relative);
     var expected = this.expectedFiles[file.relative];
-    assert(vinyl.isVinyl(file));
+    if (typeof expected === 'string')
+        expected = { contents: expected };
+    assert(vinyl.isVinyl(file), file.relative + " is not a vinyl file");
     for (var key in expected) {
         var expectedValue = expected[key];
         if (key === "contents") {
             if (Buffer.isBuffer(expectedValue)) {
-                assert(expectedValue.equals(file.contents));
+                assert(
+                    expectedValue.equals(file.contents),
+                    "file content mismatch for " + file.relative);
             } else {
                 assert.strictEqual(
                     file.contents.toString().trim(),
-                    expectedValue.trim());
+                    expectedValue.trim(),
+                    "file content mismatch for " + file.relative);
             }
         } else {
-            assert.strictEqual(expectedValue, file[key]);
+            assert.strictEqual(
+                expectedValue, file[key],
+                "mismatch for property " + key + " of " + file.relative);
         }
     }
     delete this.expectedFiles[file.relative];
@@ -44,7 +53,9 @@ ExpectStream.prototype.verifyOnFile = function(file) {
 
 ExpectStream.prototype.verifyOnFinish = function(callback) {
     try {
-        assert.strictEqual(Object.keys(this.expectedFiles).length, 0);
+        assert.strictEqual(
+            Object.keys(this.expectedFiles).length, 0,
+            "some expected files missing from actual stream");
     } catch (err) {
         return callback(err);
     }
