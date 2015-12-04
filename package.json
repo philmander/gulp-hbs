@@ -28,6 +28,9 @@
     "through2": "^0.6.5"
   },
   "devDependencies": {
-    "mocha": "^2.2.4"
+    "mocha": "^2.2.4",
+    "vinyl": "^1.1.0",
+    "vinyl-fs": "^2.2.1",
+    "vinyl-fs-mock": "git://github.com/gagern/vinyl-fs-mock.git#8a2d3f631bcd59f89f0600543586cc946abcb322"
   }
 }
