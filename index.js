@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 var through = require('through2');
 var gutil = require('gulp-util');
@@ -8,7 +8,7 @@ var PluginError = gutil.PluginError;
 
 var globalCache = {};
 
-const PLUGIN_NAME = 'gulp-hbs';
+var PLUGIN_NAME = 'gulp-hbs';
 
 function pluginError(msg) {
     return new gutil.PluginError(PLUGIN_NAME, msg);
@@ -16,13 +16,43 @@ function pluginError(msg) {
 
 const THE_ONLY_TEMPLATE = {};
 
-function gulpHbs(templateSrc) {
+function gulpHbs(templateSrc, options) {
+
+    options = options || {};
+    var cache = options.cache || globalCache;
+    if (options.cache === true) cache = globalCache;
+    if (options.cache === false) cache = {};
+    var defaultTemplateName = options.defaultTemplate || THE_ONLY_TEMPLATE;
+    var dataSource = options.dataSource || 'json';
+    var bodyAttribute = options.bodyAttribute || 'body';
+    var templateAttribute = options.templateAttribute || 'template';
+    templateAttribute = templateAttribute.split('.');
+    var compile = options.compile || Handlebars.compile;
 
     var registry = {};
     var registryComplete = false;
     var currentJob = false;
     var currentError = null;
     var forcedTemplateName = null;
+
+    if (dataSource === 'json') {
+        dataSource = function(file) {
+            return JSON.parse(file.contents.toString());
+        };
+    } else if (dataSource === 'vinyl') {
+        dataSource = function(file) {
+            file[bodyAttribute] = file.contents.toString();
+            return file;
+        };
+    } else if (dataSource === 'data') {
+        dataSource = function(file) {
+            var data = file.data;
+            data[bodyAttribute] = file.contents.toString();
+            return data;
+        };
+    } else if (typeof dataSource !== 'function') {
+        throw pluginError('Unknown dataSource');
+    }
 
     if (typeof templateSrc === 'object' && templateSrc.pipe) {
 
@@ -32,7 +62,7 @@ function gulpHbs(templateSrc) {
                 if (!file.isBuffer())
                     throw pluginError('Template sources must be buffers');
                 registry[file.relative] =
-                    Handlebars.compile(file.contents.toString('utf-8'));
+                    compile(file.contents.toString('utf-8'));
             } catch(err) {
                 reportAsyncError(err);
             }
@@ -44,20 +74,20 @@ function gulpHbs(templateSrc) {
     } else if (typeof templateSrc === 'string') {
 
         // template source is a file name
-        forcedTemplateName = "default";
-        if (!globalCache.hasOwnProperty(templateSrc)) {
+        forcedTemplateName = 'default';
+        if (!cache.hasOwnProperty(templateSrc)) {
             // Have to read this template for the first time
-            var waiting = globalCache[templateSrc] = [];
+            var waiting = cache[templateSrc] = [];
             fs.readFile(templateSrc, 'utf-8', function(err, data) {
                 if (err) {
                     // Report the same error to all other waiting instances
                     waiting.forEach(function(cb) {
                         cb(err, null);
                     });
-                    delete globalCache[templateSrc];
+                    delete cache[templateSrc];
                     return reportAsyncError(err);
                 }
-                registry.default = globalCache[templateSrc] =
+                registry.default = cache[templateSrc] =
                     Handlebars.compile(data);
                 // Release all waiting instances
                 waiting.forEach(function(cb) {
@@ -66,19 +96,19 @@ function gulpHbs(templateSrc) {
                 registryComplete = true;
                 resumeJob();
             });
-        } else if (typeof globalCache[templateSrc] !== 'function') {
+        } else if (typeof cache[templateSrc] !== 'function') {
             // Template is already being read, so wait for that
-            globalCache[templateSrc].push(function(err, template) {
+            cache[templateSrc].push(function(err, template) {
                 if (err) return reportAsyncError(err);
                 registry = {
-                    "default": template
+                    'default': template
                 };
                 registryComplete = true;
                 resumeJob();
             });
         } else {
             registry = {
-                "default": globalCache[templateSrc]
+                'default': cache[templateSrc]
             };
             registryComplete = true;
         }
@@ -130,12 +160,19 @@ function gulpHbs(templateSrc) {
         }
     }
 
+    function getTemplateName(data) {
+        for (var i = 0; i < templateAttribute.length; ++i) {
+            if (!data) return null;
+            data = data[templateAttribute[i]];
+        }
+        return data;
+    }
+
     function processFile(file, cb) {
-        var json = file.contents.toString();
-        var data = JSON.parse(json);
+        var data = dataSource(file);
         var templateName = forcedTemplateName
-            || data.template
-            || THE_ONLY_TEMPLATE;
+            || getTemplateName(data)
+            || defaultTemplateName;
         if (registryComplete) {
             processData(file, data, templateName, cb);
         } else if (currentJob) {

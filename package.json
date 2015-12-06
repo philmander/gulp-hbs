@@ -31,6 +31,10 @@
     "through2": "^0.6.5"
   },
   "devDependencies": {
+    "gulp-data": "^1.2.1",
+    "gulp-dox": "^0.1.6",
+    "gulp-front-matter": "^1.3.0",
+    "markit-json": "^0.2.1",
     "merge-stream": "^1.0.0",
     "mocha": "^2.2.4",
     "rewire": "^2.5.1",

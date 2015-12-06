@@ -72,6 +72,37 @@ it('should use choose among several templates', function(done) {
         }, done));
 });
 
+it('should choose templates using glob-relative path', function(done) {
+    var fs = mockfs({
+        'data1.json': '{"index":1, "template":"template1.hbs"}',
+        'data2.json': '{"index":2, "template":"xyz/template2.hbs"}',
+        't': {
+            'template1.hbs': '<p>index {{index}} template 1</p>',
+            'xyz': {'template2.hbs': '<p>index {{index}} template 2</p>'}}
+    });
+    fs.src('*.json')
+        .pipe(hbs(fs.src('t/**/*.hbs')))
+        .pipe(expects.files({
+            'data1.html': '<p>index 1 template 1</p>',
+            'data2.html': '<p>index 2 template 2</p>',
+        }, done));
+});
+
+it('should choose templates using nested key', function(done) {
+    var fs = mockfs({
+        'data1.json': '{"index":1, "meta":{"template":"template1.hbs"}}',
+        'data2.json': '{"index":2, "meta":{"template":"template2.hbs"}}',
+        'template1.hbs': '<p>index {{index}} template 1</p>',
+        'template2.hbs': '<p>index {{index}} template 2</p>',
+    });
+    fs.src('*.json')
+        .pipe(hbs(fs.src('*.hbs'), {templateAttribute:"meta.template"}))
+        .pipe(expects.files({
+            'data1.html': '<p>index 1 template 1</p>',
+            'data2.html': '<p>index 2 template 2</p>',
+        }, done));
+});
+
 it('should work if inputs arrive faster than templates', function(done) {
     var templateStream = new through.obj(); // pass-through
     var hbStream = hbs(templateStream);
@@ -201,4 +232,74 @@ it('should read the same file concurrently', function(done) {
         if (!readCb) done(Error("Expected one read by this time"));
         readCb(null, '<p>{{content}}</p>');
     }, 20);
+});
+
+it('cooperates with gulp-dox', function(done) {
+    var fs = mockfs({
+        'source.js': '/** Foo */\nfunction foo(){}\n\n' +
+            '/** Bar */\nfunction bar(){}',
+        'template.hbs': '<ul>{{#each .}}<li>' +
+            '{{{description.summary}}}</li>{{/each}}</ul>',
+    });
+    fs.src('*.js')
+        .pipe(require('gulp-dox')())
+        .pipe(hbs(fs.src('*.hbs')))
+        .pipe(expects.singleFile(
+            'source.html',
+            '<ul><li><p>Foo</p></li><li><p>Bar</p></li></ul>',
+            done));
+});
+
+it('cooperates with markit-json', function(done) {
+    var fs = mockfs({
+        'file.md': '---\nattr: value\n---\n*body*',
+        'template.hbs': '<p>{{attr}}</p><hr>{{{body}}}',
+    });
+    fs.src('*.md')
+        .pipe(require('markit-json')())
+        .pipe(hbs(fs.src('*.hbs')))
+        .pipe(expects.singleFile(
+            'file.html',
+            '<p>value</p><hr><p><em>body</em></p>',
+            done));
+});
+
+it('cooperates with gulp-font-matter in vinyl mode', function(done) {
+    var fs = mockfs({
+        'file.html': '---\nattr: value\n---\n<p>body</p>',
+        'template.hbs': '<p>{{frontMatter.attr}}</p><hr>{{{body}}}',
+    });
+    fs.src('*.html')
+        .pipe(require('gulp-front-matter')())
+        .pipe(hbs(fs.src('*.hbs'), {dataSource: 'vinyl'}))
+        .pipe(expects.singleFile(
+            'file.html',
+            '<p>value</p><hr><p>body</p>',
+            done));
+});
+
+it('cooperates with gulp-font-matter in data mode', function(done) {
+    var fs = mockfs({
+        'file.html': '---\ntemplate: template1.hbs\n---\nbody',
+        'template1.hbs': '<p>{{{body}}}</p>',
+        'template2.hbs': '<pre>{{{body}}}</pre>',
+    });
+    fs.src('*.html')
+        .pipe(require('gulp-front-matter')({property: 'data'}))
+        .pipe(hbs(fs.src('*.hbs'), {dataSource: 'data'}))
+        .pipe(expects.singleFile('file.html', '<p>body</p>', done));
+});
+
+it('cooperates with gulp-data', function(done) {
+    var fs = mockfs({
+        'file.html': '<p>body</p>',
+        'template.hbs': '<p>{{data.attr}}</p><hr>{{{body}}}',
+    });
+    fs.src('*.html')
+        .pipe(require('gulp-data')(function(file) { return {attr: 'value'}; }))
+        .pipe(hbs(fs.src('*.hbs'), {dataSource: 'vinyl'}))
+        .pipe(expects.singleFile(
+            'file.html',
+            '<p>value</p><hr><p>body</p>',
+            done));
 });
