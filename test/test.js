@@ -303,3 +303,16 @@ it('cooperates with gulp-data', function(done) {
             '<p>value</p><hr><p>body</p>',
             done));
 });
+
+it('can be isolated', function(done) {
+    var fs = mockfs({
+        'file.json': '{"index":1}',
+        'template.hbs': '{{foo}} {{index}}',
+    });
+    var instance = hbs.handlebars.create();
+    instance.registerHelper('foo', function() { return 'bar'; });
+    fs.src('*.json')
+        .pipe(require('gulp-data')(function(file) { return {attr: 'value'}; }))
+        .pipe(hbs(fs.src('*.hbs'), {compile: instance.compile.bind(instance)}))
+        .pipe(expects.singleFile('file.html', 'bar 1', done));
+});

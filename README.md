@@ -106,6 +106,12 @@ Register a handlebars [helper](http://handlebarsjs.com/#helpers).
 
 Register a handlebars [partial](http://handlebarsjs.com/partials.html).
 
+### hbs.handlebars
+
+This is the underlying Handlebars object used by this plugin.
+Using this reference, you can use the full Handlebars API
+and be certain to affect the module used by the plugin.
+
 ## Cooperation
 
 The plugin is designed to cooperate with various other plugins.

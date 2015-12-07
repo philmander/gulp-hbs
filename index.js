@@ -220,5 +220,7 @@ gulpHbs.registerPartial = function(name, partial) {
     Handlebars.registerPartial(name, partial);
 };
 
+gulpHbs.handlebars = Handlebars;
+
 // Exporting the plugin main function
 module.exports = gulpHbs;
