@@ -63,11 +63,10 @@ function gulpHbs(templateSrc, options) {
         if (file.isNull()) {
             cb(null, file);
         } else if (file.isBuffer()) {
-            try {
-                processFile(file).then(function(file) { cb(null, file); }, cb);
-            } catch (err) {
-                cb(err);
-            }
+            Promise.resolve(file)
+                .then(processFile)
+                .done(function(file) { cb(null, file); },
+                      function(err) { cb(err, null); });
         } else if (file.isStream()) {
             cb(pluginError('Streaming not supported'));
         } else {
