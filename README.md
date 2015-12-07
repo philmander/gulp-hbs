@@ -100,11 +100,11 @@ The following options are supported:
 
 ### hbs.registerHelper(name, helperFn)
 
-Register a handlebars [helper](https://github.com/wycats/handlebars.js/#registering-helpers)
+Register a handlebars [helper](http://handlebarsjs.com/#helpers).
 
 ### hbs.registerPartial(name, partial)
 
-Register a handlebars [partial](https://github.com/wycats/handlebars.js/#partials)
+Register a handlebars [partial](http://handlebarsjs.com/partials.html).
 
 ## Cooperation
 
