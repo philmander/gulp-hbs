@@ -26,6 +26,7 @@
   },
   "homepage": "https://github.com/philmander/gulp-hbs",
   "dependencies": {
+    "bluebird": "^3.0.6",
     "gulp-util": "^3.0.4",
     "handlebars": "^3.0.2",
     "through2": "^0.6.5"
