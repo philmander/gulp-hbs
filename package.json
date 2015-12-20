@@ -1,6 +1,6 @@
 {
   "name": "gulp-hbs",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Gulp plugin that runs JSON files through a handlebars template, converting them to HTML",
   "main": "index.js",
   "scripts": {
