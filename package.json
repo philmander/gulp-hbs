@@ -4,7 +4,7 @@
   "description": "Gulp plugin that runs JSON files through a handlebars template, converting them to HTML",
   "main": "index.js",
   "scripts": {
-    "test": "mocha test.js"
+    "test": "mocha"
   },
   "repository": {
     "type": "git",
@@ -18,17 +18,30 @@
     "gulpplugin"
   ],
   "author": "Phil Mander",
+  "contributors": [
+    "Martin von Gagern <Martin.vGagern@gmx.net>"
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/philmander/gulp-hbs/issues"
   },
   "homepage": "https://github.com/philmander/gulp-hbs",
   "dependencies": {
+    "bluebird": "^3.0.6",
     "gulp-util": "^3.0.4",
     "handlebars": "^3.0.2",
     "through2": "^0.6.5"
   },
   "devDependencies": {
-    "mocha": "^2.2.4"
+    "gulp-data": "^1.2.1",
+    "gulp-dox": "^0.1.6",
+    "gulp-front-matter": "^1.3.0",
+    "markit-json": "^0.2.1",
+    "merge-stream": "^1.0.0",
+    "mocha": "^2.2.4",
+    "rewire": "^2.5.1",
+    "vinyl": "^1.1.0",
+    "vinyl-fs": "^2.2.1",
+    "vinyl-fs-mock": "^0.1.2"
   }
 }
